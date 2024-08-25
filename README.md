@@ -17,3 +17,10 @@ java @project install
 ```
 
 ## Then
+
+To see available commands run
+
+```shell
+java @project
+```
+
