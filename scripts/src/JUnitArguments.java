@@ -1,11 +1,17 @@
 import dev.mccue.tools.ToolArguments;
 
+import java.util.Collection;
+
 public final class JUnitArguments extends ToolArguments {
     static String toArgumentString(Object o) {
         return o == null ? "" : o.toString();
     }
 
     public JUnitArguments() {}
+
+    public JUnitArguments(Collection<? extends String> c) {
+        super(c);
+    }
 
     public JUnitArguments discover() {
         add("discover");

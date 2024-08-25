@@ -19,7 +19,7 @@ public final class Project {
     @CommandLine.Command(name = "install")
     public void install() throws ExitStatusException {
         Tool.ofSubprocess("jresolve")
-                .logAndRun(
+                .run(
                         "--purge-output-directory",
                         "--use-module-names",
                         "--output-directory", "libs",
@@ -30,13 +30,13 @@ public final class Project {
     @CommandLine.Command(name = "clean")
     public void clean() throws ExitStatusException {
         Tool.ofSubprocess("rm")
-                .logAndRun("-rf", "build");
+                .run("-rf", "build");
     }
 
     @CommandLine.Command(name = "compile")
     public void compile() throws ExitStatusException {
         clean();
-        Javac.execute(arguments -> {
+        Javac.run(arguments -> {
             arguments
                     ._d(Path.of("build/javac"))
                     .__module_path("libs")
@@ -45,10 +45,11 @@ public final class Project {
         });
     }
 
+
     @CommandLine.Command(name = "package")
     public void package_() throws Exception {
         compile();
-        Jar.execute(arguments -> {
+        Jar.run(arguments -> {
             arguments.__create()
                     .__file(Path.of("build/jar/web.hello.jar"))
                     .__main_class("web.hello.Application")
@@ -56,19 +57,19 @@ public final class Project {
                     ._C(Path.of("build/javac/web.hello"), ".");
         });
 
-        Jar.execute(arguments -> {
+        Jar.run(arguments -> {
             arguments.__create()
                     .__file(Path.of("build/jar/web.util.jar"))
                     ._C(Path.of("build/javac/web.util"), ".");
         });
 
-        Jar.execute(arguments -> {
+        Jar.run(arguments -> {
             arguments.__create()
                     .__file(Path.of("build/jar/web.hello.test.jar"))
                     ._C(Path.of("build/javac/web.hello.test"), ".");
         });
 
-        Jar.execute(arguments -> {
+        Jar.run(arguments -> {
             arguments.__create()
                     .__file(Path.of("build/jar/web.util.test.jar"))
                     ._C(Path.of("build/javac/web.util.test"), ".");
@@ -77,7 +78,7 @@ public final class Project {
 
     @CommandLine.Command(name = "document")
     public void document() throws Exception {
-        Javadoc.execute(arguments -> {
+        Javadoc.run(arguments -> {
             arguments._d(Path.of("build/javadoc"))
                     .__module_path("libs")
                     .__module_source_path("./modules/*/src")
@@ -88,7 +89,7 @@ public final class Project {
     @CommandLine.Command(name = "test")
     public void test() throws Exception {
         package_();
-        Java.execute(arguments -> {
+        Java.run(arguments -> {
             arguments.__module_path("libs", "build/jar")
                     .__add_modules("web.hello.test", "web.util.test")
                     .__module("org.junit.platform.console")
@@ -102,9 +103,10 @@ public final class Project {
         });
     }
 
+
     @CommandLine.Command(name = "run")
     public void run() throws ExitStatusException {
-        Java.execute(arguments -> {
+        Java.run(arguments -> {
             arguments
                     .__module_path(
                             Path.of("libs"),
