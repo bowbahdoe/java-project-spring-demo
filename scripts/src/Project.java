@@ -4,6 +4,8 @@ import dev.mccue.tools.jar.Jar;
 import dev.mccue.tools.java.Java;
 import dev.mccue.tools.javac.Javac;
 import dev.mccue.tools.javadoc.Javadoc;
+import dev.mccue.tools.jresolve.JResolve;
+import dev.mccue.tools.junit.JUnitArguments;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
@@ -18,13 +20,13 @@ public final class Project {
 
     @CommandLine.Command(name = "install")
     public void install() throws ExitStatusException {
-        Tool.ofSubprocess("jresolve")
-                .run(
-                        "--purge-output-directory",
-                        "--use-module-names",
-                        "--output-directory", "libs",
-                        "@libs.txt"
-                );
+        JResolve.run(arguments -> {
+            arguments
+                    .__purge_output_directory()
+                    .__use_module_names()
+                    .__output_directory("libs")
+                    .argumentFile("libs.txt");
+        });
     }
 
     @CommandLine.Command(name = "clean")
@@ -47,7 +49,7 @@ public final class Project {
 
 
     @CommandLine.Command(name = "package")
-    public void package_() throws Exception {
+    public void package_() throws ExitStatusException {
         compile();
         Jar.run(arguments -> {
             arguments.__create()
@@ -77,7 +79,7 @@ public final class Project {
     }
 
     @CommandLine.Command(name = "document")
-    public void document() throws Exception {
+    public void document() throws ExitStatusException {
         Javadoc.run(arguments -> {
             arguments._d(Path.of("build/javadoc"))
                     .__module_path("libs")
@@ -96,6 +98,7 @@ public final class Project {
                     .addAll(
                             new JUnitArguments()
                                     .execute()
+                                    .__disable_banner()
                                     .__select_module("web.hello.test")
                                     .__select_module("web.util.test")
                                     .__reports_dir(Path.of("build/junit"))
@@ -111,7 +114,8 @@ public final class Project {
                     .__module_path(
                             Path.of("libs"),
                             Path.of("build/jar")
-                    ).__module("web.hello");
+                    )
+                    .__module("web.hello");
         });
     }
 }

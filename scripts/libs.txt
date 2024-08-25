@@ -1,2 +1,4 @@
-pkg:maven/dev.mccue/tools@2024.08.25
+pkg:maven/dev.mccue/tools-jdk@2024.08.25.5
+pkg:maven/dev.mccue/tools-junit@2024.08.25.5
+pkg:maven/dev.mccue/tools-jresolve@2024.08.25.5
 pkg:maven/info.picocli/picocli@4.7.6

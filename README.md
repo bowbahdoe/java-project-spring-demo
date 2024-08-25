@@ -7,7 +7,6 @@ bash < <(curl -s  https://raw.githubusercontent.com/bowbahdoe/jresolve-cli/main/
 ```shell
 jresolve \
     --output-directory scripts/libs \
-    --use-module-names \
     --purge-output-directory \
     @scripts/libs.txt
 ```
