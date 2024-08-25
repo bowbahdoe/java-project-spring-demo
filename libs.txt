@@ -1,0 +1,5 @@
+pkg:maven/org.springframework.boot/spring-boot-starter-web@3.3.0
+pkg:maven/org.junit.jupiter/junit-jupiter-api@5.10.2
+# Not horrible to have, but boy I wish `junit`'s CLI was distributed normally
+pkg:maven/org.junit.platform/junit-platform-console@1.10.2
+pkg:maven/org.junit.jupiter/junit-jupiter-engine@5.10.2

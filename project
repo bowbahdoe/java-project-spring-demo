@@ -1,0 +1,1 @@
+-p scripts/libs --add-modules ALL-MODULE-PATH scripts/src/Project.java
