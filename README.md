@@ -1,18 +1,11 @@
 ## To Set Up Project
 
 ```bash
-bash < <(curl -s  https://raw.githubusercontent.com/bowbahdoe/jresolve-cli/main/install)
+bash < <(curl -s  https://raw.githubusercontent.com/bowbahdoe/jproject/main/install)
 ```
 
 ```shell
-jresolve \
-    --output-directory scripts/libs \
-    --purge-output-directory \
-    @scripts/libs.txt
-```
-
-```shell
-java @project install
+jproject download
 ```
 
 ## Then

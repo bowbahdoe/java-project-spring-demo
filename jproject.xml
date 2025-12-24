@@ -1,0 +1,83 @@
+<project>
+    <defaultUsage>--module-path</defaultUsage>
+    
+    <dependencies>
+        <dependency>
+            <url>pkg:maven/org.springframework.boot/spring-boot-starter-web@3.5.9</url>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/org.junit.jupiter/junit-jupiter-api@5.10.2</url>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/org.junit.platform/junit-platform-console@1.10.2</url>
+            <dependencySets>
+                <test/>
+            </dependencySets>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/org.junit.jupiter/junit-jupiter-engine@5.10.2</url>
+            <dependencySets>
+                <test/>
+            </dependencySets>
+        </dependency>
+
+        <dependency>
+            <path>build/jar</path>
+            <dependencySets>
+                <runtime/>
+                <test/>
+            </dependencySets>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/dev.mccue/tools-jdk@2024.08.25.5</url>
+            <dependencySets>
+                <scripts/>
+            </dependencySets>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/dev.mccue/tools-junit@2024.08.25.5</url>
+            <dependencySets>
+                <scripts/>
+            </dependencySets>
+        </dependency>
+
+        <dependency>
+            <url>pkg:maven/info.picocli/picocli@4.7.6</url>
+            <dependencySets>
+                <scripts/>
+            </dependencySets>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.21.0</version>
+            <dependencySets>
+                <scripts/>
+            </dependencySets>
+        </dependency>
+    </dependencies>
+
+    <dependencySets>
+        <runtime>
+            <extends>default</extends>
+        </runtime>
+        <test>
+            <extends>default</extends>
+        </test>
+    </dependencySets>
+
+    <argumentFiles>
+        <project>
+            <dependencySet>scripts</dependencySet>
+            <argument>--add-modules=ALL-MODULE-PATH</argument>
+            <path>scripts/src/Project.java</path>
+        </project>
+    </argumentFiles>
+</project>

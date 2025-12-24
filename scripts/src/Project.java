@@ -4,9 +4,9 @@ import dev.mccue.tools.jar.Jar;
 import dev.mccue.tools.java.Java;
 import dev.mccue.tools.javac.Javac;
 import dev.mccue.tools.javadoc.Javadoc;
-import dev.mccue.tools.jresolve.JResolve;
 import dev.mccue.tools.junit.JUnitArguments;
 import picocli.CommandLine;
+import module org.apache.commons.io;
 
 import java.nio.file.Path;
 
@@ -14,34 +14,25 @@ import java.nio.file.Path;
         name = "project"
 )
 public final class Project {
+    private static final Path BUILD = Path.of("build");
+
     public static void main(String[] args) {
         new CommandLine(new Project()).execute(args);
     }
 
-    @CommandLine.Command(name = "install")
-    public void install() throws ExitStatusException {
-        JResolve.run(arguments -> {
-            arguments
-                    .__purge_output_directory()
-                    .__use_module_names()
-                    .__output_directory("libs")
-                    .argumentFile("libs.txt");
-        });
-    }
-
     @CommandLine.Command(name = "clean")
-    public void clean() throws ExitStatusException {
-        Tool.ofSubprocess("rm")
-                .run("-rf", "build");
+    public void clean() throws Exception {
+        System.err.println("rm -rf " + BUILD);
+        FileUtils.deleteDirectory(BUILD.toFile());
     }
 
     @CommandLine.Command(name = "compile")
-    public void compile() throws ExitStatusException {
+    public void compile() throws Exception {
         clean();
         Javac.run(arguments -> {
             arguments
-                    ._d(Path.of("build/javac"))
-                    .__module_path("libs")
+                    ._d(BUILD.resolve("javac"))
+                    .argumentFile(Path.of("dependencySets", "default"))
                     .__module_source_path("./modules/*/src")
                     .__module("web.hello", "web.util", "web.hello.test", "web.util.test");
         });
@@ -49,20 +40,20 @@ public final class Project {
 
 
     @CommandLine.Command(name = "package")
-    public void package_() throws ExitStatusException {
+    public void package_() throws Exception {
         compile();
         Jar.run(arguments -> {
             arguments.__create()
-                    .__file(Path.of("build/jar/web.hello.jar"))
+                    .__file(BUILD.resolve("jar", "web.hello.jar"))
                     .__main_class("web.hello.Application")
                     ._C(Path.of("modules/web.hello/res"), ".")
-                    ._C(Path.of("build/javac/web.hello"), ".");
+                    ._C(BUILD.resolve("javac", "web.hello"), ".");
         });
 
         Jar.run(arguments -> {
             arguments.__create()
                     .__file(Path.of("build/jar/web.util.jar"))
-                    ._C(Path.of("build/javac/web.util"), ".");
+                    ._C(BUILD.resolve("javac", "web.util"), ".");
         });
 
         Jar.run(arguments -> {
@@ -79,7 +70,7 @@ public final class Project {
     }
 
     @CommandLine.Command(name = "document")
-    public void document() throws ExitStatusException {
+    public void document() throws Exception {
         Javadoc.run(arguments -> {
             arguments._d(Path.of("build/javadoc"))
                     .__module_path("libs")
@@ -92,8 +83,8 @@ public final class Project {
     public void test() throws Exception {
         package_();
         Java.run(arguments -> {
-            arguments.__module_path("libs", "build/jar")
-                    .__add_modules("web.hello.test", "web.util.test")
+            arguments.add("@" + Path.of("dependencySets", "test"));
+            arguments.__add_modules("web.hello.test", "web.util.test")
                     .__module("org.junit.platform.console")
                     .addAll(
                             new JUnitArguments()
@@ -108,13 +99,10 @@ public final class Project {
 
 
     @CommandLine.Command(name = "run")
-    public void run() throws ExitStatusException {
+    public void run() throws Exception {
         Java.run(arguments -> {
+            arguments.add("@" + Path.of("dependencySets", "runtime"));
             arguments
-                    .__module_path(
-                            Path.of("libs"),
-                            Path.of("build/jar")
-                    )
                     .__module("web.hello");
         });
     }
